@@ -27,11 +27,7 @@ export class LoginComponent implements OnInit {
       .pipe(
         select('users')
       )
-      .subscribe(users => {
-        if (users) {
-          this.maskUserName = users.maskUserName;
-        }
-      });
+      .subscribe(users => this.maskUserName = users.maskUserName);
   }
 
   cancel(): void {
