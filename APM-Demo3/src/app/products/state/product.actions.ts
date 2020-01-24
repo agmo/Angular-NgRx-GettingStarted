@@ -10,7 +10,10 @@ export enum ProductActionTypes {
   InitializeCurrentProduct = '[Product] Initialize Current Product',
   Load = '[Product] Load',
   LoadSuccess = '[Product] Load Success',
-  LoadFail = '[Product] Load Fail'
+  LoadFail = '[Product] Load Fail',
+  UpdateProduct = '[Product] Update Product',
+  UpdateProductSuccess = '[Product] Update Product Success',
+  UpdateProductFail = '[Product] Update Product Fail'
 }
 
 // Action Creators
@@ -50,11 +53,37 @@ export class LoadFail implements Action {
   constructor(public payload: string) { }
 }
 
+export class UpdateProduct implements Action {
+  readonly type = ProductActionTypes.UpdateProduct;
+
+  // we specify a payload of product to pass in the updated product.
+  // We'll pass this product along to the effect to save the updates to the server.
+  constructor(public payload: Product) { }
+}
+
+export class UpdateProductSuccess implements Action {
+  readonly type = ProductActionTypes.UpdateProductSuccess;
+
+  // Here, we also specify a payload of product.
+  // This is the product that is returned from the update operation and
+  // used to replace the item in the array of products.
+  constructor(public payload: Product) { }
+}
+
+export class UpdateProductFail implements Action {
+  readonly type = ProductActionTypes.UpdateProductFail;
+
+  constructor(public payload: string) { }
+}
+
 export type ProductActions = ToggleProductCode
   | SetCurrentProduct
   | ClearCurrentProduct
   | InitializeCurrentProduct
   | Load
   | LoadSuccess
-  | LoadFail;
+  | LoadFail
+  | UpdateProduct
+  | UpdateProductSuccess
+  | UpdateProductFail;
 
