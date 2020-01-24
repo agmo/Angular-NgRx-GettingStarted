@@ -15,14 +15,14 @@ export interface State extends fromRoot.State {
 // State for this feature (Product)
 export interface ProductState {
   showProductCode: boolean;
-  currentProduct: Product;
+  currentProductId: number | null;
   products: Product[];
   error: string;
 }
 
 const initialState: ProductState = {
   showProductCode: true,
-  currentProduct: null,
+  currentProductId: null,
   products: [],
   error: ''
 };
@@ -35,9 +35,29 @@ export const getShowProductCode = createSelector(
   state => state.showProductCode
 );
 
+export const getCurrentProductId = createSelector(
+  getProductFeatureState,
+  state => state.currentProductId
+);
+
 export const getCurrentProduct = createSelector(
   getProductFeatureState,
-  state => state.currentProduct
+  getCurrentProductId,
+  (state, currentProductId: number) => {
+    // If the product has an Id of 0, we assume it is a new product that has not yet had an Id defined.
+    // We then return an object with appropriate default values.
+    if (currentProductId === 0) {
+      return {
+        id: 0,
+        productName: '',
+        productCode: 'New',
+        description: '',
+        starRating: 0
+      };
+    } else {
+      return currentProductId ? state.products.find(p => p.id === currentProductId) : null;
+    }
+  }
 );
 
 export const getProducts = createSelector(
@@ -62,25 +82,24 @@ export function reducer(state = initialState, action: ProductActions): ProductSt
     case ProductActionTypes.SetCurrentProduct:
       return {
         ...state,
-        currentProduct: { ...action.payload }
+        // Since the Id is a number and a number is a value type, not a reference type,
+        // we don't need to spread an object. We simply assign the currentProductId property
+        // to the Id provided in the payload.
+        currentProductId: action.payload.id
       };
 
     case ProductActionTypes.ClearCurrentProduct:
       return {
         ...state,
-        currentProduct: null
+        currentProductId: null
       };
 
     case ProductActionTypes.InitializeCurrentProduct:
       return {
         ...state,
-        currentProduct: {
-          id: 0,
-          productName: '',
-          productCode: 'New',
-          description: '',
-          starRating: 0
-        }
+        // When initializing a product, we set the currentProductId to 0 to denote a new product and
+        // the selector handles the rest.
+        currentProductId: 0
       };
 
     case ProductActionTypes.LoadSuccess:
