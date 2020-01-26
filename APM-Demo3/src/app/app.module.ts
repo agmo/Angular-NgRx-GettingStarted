@@ -23,6 +23,14 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 
+const storeDevTools = !environment.production
+  ? StoreDevtoolsModule.instrument({
+    name: 'APM Demo App DevTools',
+    maxAge: 25,
+    logOnly: environment.production,
+  })
+  : [];
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -40,11 +48,7 @@ import { EffectsModule } from '@ngrx/effects';
     //       strictActionSerializability: true
     //     }
     //   }),
-    StoreDevtoolsModule.instrument({
-      name: 'APM Demo App DevTools',
-      maxAge: 25,
-      logOnly: environment.production,
-    }),
+    storeDevTools,
     EffectsModule.forRoot([])
   ],
   declarations: [
